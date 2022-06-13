@@ -10,7 +10,7 @@ import matplotlib.font_manager as fm
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
-
+os.chdir('/Users/bekzatajan/Job_NU/Matlab/ThreeRegions/NewResults/')
 filesindir=os.listdir('csvs/')
 meanss=[]
 stdd=[]
@@ -241,8 +241,6 @@ for colis in colsofdf:
 
 for pari in parsplot:
     plotminmax2(subData, colsofdf, pari, xLabsPlot, yLabsPlot)
-
-
 
 
 
