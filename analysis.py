@@ -51,7 +51,7 @@ def smooth(y, box_pts):
     return y_smooth
 
 
-def plotmeshsense(subData):
+def plotmeshsense(subData,vertX, figname):
     
     parsplot=['V', 'High velocity region', 'Low velocity region']
     parDict={'V':{'col':7, 'Lab':"v'"}, 'High velocity region':{'col':1, 'Lab':'$A_{h}$/A'}, 'Low velocity region':{'col':5, 'Lab':'$A_{l}$/A'}}    
@@ -85,14 +85,15 @@ def plotmeshsense(subData):
         ax.yaxis.set_tick_params(which='minor', size=3, width=1, direction='in', right='on')                
         
         ax.plot(X, Case1, linewidth=1, color=colors(0), label='Parameter value')
-        ax.axvline(x=200, color='green', ls=':', lw=1, label='Optimal $N_{x}, N_{y}$')
+
+        ax.axvline(x=vertX, color='green', ls=':', lw=1, label='Optimal $N_{x}, N_{y}$')
         #if i2==0:
         #    ax.legend(bbox_to_anchor=(1.36, 1), loc=1, frameon=False, fontsize=11)
         
         ax.text(-0.17, 1, textLabs[i2], fontsize=12, ha='center', va='center', transform=ax.transAxes)
         
         # Add the x and y-axis labels
-        ax.set_xlabel('$N_{x}, N_{y}$', labelpad=5)
+        ax.set_xlabel('$N_{t}$', labelpad=5)
         ax.set_ylabel(yLabis, labelpad=5)
         i2+=1 
     
@@ -103,16 +104,17 @@ def plotmeshsense(subData):
                     wspace=0.5, 
                     hspace=0.65)
     
-    plt.savefig(("meshSense/AllParams3in1.png"), dpi=300, transparent=False, bbox_inches='tight')
+    plt.savefig(("meshSense/"+figname+".png"), dpi=300, transparent=False, bbox_inches='tight')
     
 
 
 meshdf=pd.read_csv(('meshSense/nXDependent.csv'),header=None)
-plotmeshsense(meshdf)
-plt.show()
+plotmeshsense(meshdf, 200, 'MeshDependence_3in1')
 # # Plot function for Min&Max lines for 4 in 1
+tiledf=pd.read_csv('meshSense/nT_Dependent.csv', header=None)
+plotmeshsense(tiledf, 3, 'TilesDependence_3in1')
 
-    
+
 def plotminmax2(subData, colsofdf, pari, XLabel, YLabel):
     xlimsAll={'dx':[-0.04, 0.54],'dy':[-0.04, 0.54], 'd': [0.5, 3.1], 'alpha':[-2, 47]}
     ylimsAll={'V':[.2, .4],'Low velocity region':[-0.02, 0.35],'High velocity region':[0.35, 0.85]}
@@ -146,14 +148,14 @@ def plotminmax2(subData, colsofdf, pari, XLabel, YLabel):
             #ax.axvline(x=X[np.argmax(Max)], color='red', ls=':', lw=1, label='Max')
             #ax.axvline(x=X[np.argmin(Min)], color='blue', ls=':', lw=1, label='Min')            
             if (i2==0):
-                ax.text(-0.17, 1, 'a)', fontsize=12, ha='center', va='center', transform=ax.transAxes)
+                ax.text(-0.15, 1, 'a)', fontsize=12, ha='center', va='center', transform=ax.transAxes)
 #                ax.legend(bbox_to_anchor=(1.75, 1), loc=1, frameon=False, fontsize=11)
             
             elif (i2==1):
-                ax.text(-0.17, 1, 'b)', fontsize=12, ha='center', va='center', transform=ax.transAxes)
+                ax.text(-0.15, 1, 'b)', fontsize=12, ha='center', va='center', transform=ax.transAxes)
             
             elif (i2==2):
-                ax.text(-0.17, 1, 'c)', fontsize=12, ha='center', va='center', transform=ax.transAxes)
+                ax.text(-0.15, 1, 'c)', fontsize=12, ha='center', va='center', transform=ax.transAxes)
             
             
             # Set the axis limits
@@ -290,8 +292,6 @@ def Contours4in1(df, pari, ds, alphas):
     fig, axes = plt.subplots(2, 2, sharex='none', sharey='none')
     i2=0
     for ax in axes.flat:
-            coli=colsofdf[i2]
-            
             d=ds[i2]
             alpha=alphas[i2]
             
@@ -306,7 +306,7 @@ def Contours4in1(df, pari, ds, alphas):
             
             for k in range(len(x)):
                 for m in range(len(y)):
-                    Z[k,m]=float(df.loc[(df['dx']==x[k]) & (df['dy']==y[m]) & (df['alpha']==alpha) & (df['d']==d), [pari]].values)
+                    Z[k,m]=float(df.loc[(df['dx']==x[k]) & (df['dy']==y[m]) & (df['alpha']==alpha), [pari]].values)
 
             print(np.max(Z))
             minmaxdf=df.loc[(df['alpha']==alpha) & (df['d']==d), ['dx','dy',pari]]
@@ -323,21 +323,21 @@ def Contours4in1(df, pari, ds, alphas):
             clb=plt.colorbar(im, cax=cax,**kwargs)
             clb.ax.set_title(parDict[pari],fontsize=11)
             
-            ax.scatter(Max.dx, Max.dy, s=20,c='red', edgecolor='#D0D3D4')
-            ax.scatter(Min.dx, Min.dy, s=20, c='#336EFF', edgecolor='#D0D3D4')
+            #ax.scatter(Max.dx, Max.dy, s=20,c='red', edgecolor='#D0D3D4')
+            #ax.scatter(Min.dx, Min.dy, s=20, c='#336EFF', edgecolor='#D0D3D4')
             
             if (i2==0):
-                ax.text(-0.17, 1, 'a)', fontsize=12, ha='center', va='center', transform=ax.transAxes)
+                ax.text(-0.24, 1, 'a)', fontsize=12, ha='center', va='center', transform=ax.transAxes)
                 
             elif (i2==1):
-                ax.text(-0.1, 1, 'b)', fontsize=12, ha='center', va='center', transform=ax.transAxes)
+                ax.text(-0.24, 1, 'b)', fontsize=12, ha='center', va='center', transform=ax.transAxes)
                 
             elif (i2==2):
-                ax.text(-0.17, 1, 'c)', fontsize=12, ha='center', va='center', transform=ax.transAxes)
+                ax.text(-0.24, 1, 'c)', fontsize=12, ha='center', va='center', transform=ax.transAxes)
                 
                 
             elif (i2==3):
-                ax.text(-0.1, 1, 'd)', fontsize=12, ha='center', va='center', transform=ax.transAxes)
+                ax.text(-0.24, 1, 'd)', fontsize=12, ha='center', va='center', transform=ax.transAxes)
                 
             
             i2+=1
@@ -346,12 +346,15 @@ def Contours4in1(df, pari, ds, alphas):
                     bottom=0.1, 
                     right=0.9, 
                     top=0.9, 
-                    wspace=0.5, 
+                    wspace=0.6, 
                     hspace=0.5)
 
     plt.savefig(('Contours/'+pari+"4in1.png"), dpi=300, transparent=False, bbox_inches='tight')
 
 
+
+
+Contours4in1(newdf2, 'V', [1,1,1,1], [0, 15, 30, 45])
 # # Sclice plots (not complete but somehow working)
 
 
